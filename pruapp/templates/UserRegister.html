@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es"> <!-- Documento en español -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuarios</title>
+    <style>
+        /* Estilos básicos para la tabla y botones */
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        /* Fondo gris para cabeceras */
+        .btn-delete {
+            color: white;
+            background-color: red;
+            padding: 5px 10px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-update {
+            color: white;
+            background-color: blue;
+            padding: 5px 10px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .avatar {
+            max-width: 50px;
+            max-height: 50px;
+            object-fit: cover;
+        }
+
+        /* Estilo para miniaturas de avatar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Cabecera flexible */
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Usuarios Registrados ({{ total_usuarios }})</h1> <!-- Muestra el contador total desde la vista -->
+        <div>
+            <span>Usuario: {{ request.session.username }}</span> <!-- Muestra el usuario logueado actualmente -->
+            <a href="{% url 'logout' %}">Cerrar Sesión</a> <!-- Enlace al logout -->
+        </div>
+    </div>
+
+    <!-- Bloque para mostrar mensajes flash de Django (éxito, error, etc.) -->
+    {% if messages %}
+    {% for message in messages %}
+    <div style="background-color: #d4edda; color: #155724; padding: 10px; margin-bottom: 20px; border-radius: 5px;">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Avatar</th>
+                <th>Usuario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Itera sobre la lista de usuarios pasados por la vista -->
+            {% for usuario in usuarios %}
+            <tr>
+                <td>
+                    <!-- Muestra imagen si existe URL, si no texto 'Sin imagen' -->
+                    {% if usuario.imagen_url %}
+                    <img src="{{ usuario.imagen_url }}" alt="Avatar" class="avatar">
+                    {% else %}
+                    <span>Sin imagen</span>
+                    {% endif %}
+                </td>
+                <td>{{ usuario.username }}</td>
+                <td>
+                    <!-- Botón/Link para ir a la vista de editar -->
+                    <a href="{% url 'editar_usuario' usuario.id %}" class="btn-update">Actualizar</a>
+
+                    <!-- Formulario para eliminar (POST para seguridad) -->
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                        <!-- Envía el ID del usuario a borrar -->
+                        <!-- Confirmación JS antes de enviar -->
+                        <button type="submit" class="btn-delete"
+                            onclick="return confirm('¿Estás seguro de eliminar a {{ usuario.username }}?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <!-- Se muestra si no hay usuarios en la lista -->
+            <tr>
+                <td colspan="3">No hay usuarios registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>

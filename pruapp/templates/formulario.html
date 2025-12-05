@@ -1,0 +1,125 @@
+<!-- Define el tipo de documento como HTML5 -->
+<!DOCTYPE html>
+<html lang="en"> <!-- Inicio del documento HTML, idioma inglés -->
+
+<head>
+    <meta charset="UTF-8"> <!-- Codificación de caracteres UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Configuración para móviles (viewport) -->
+    <title>Formulario</title> <!-- Título de la pestaña del navegador -->
+</head>
+<style>
+    /* Estilos CSS internos */
+    body {
+        background-color: aqua;
+        /* Color de fondo de la página */
+    }
+
+    h1 {
+        text-align: center;
+        /* Centrar el título h1 */
+    }
+
+    .contenedor {
+        display: flex;
+        /* Activa Flexbox */
+        flex-direction: column;
+        /* Elementos en columna */
+        justify-content: center;
+        /* Centra horizontalmente */
+        align-items: center;
+        /* Centra verticalmente */
+        height: 100vh;
+        /* Ocupa el 100% de la altura de la pantalla */
+        background-color: blue;
+        /* Fondo azul para el contenedor */
+    }
+
+    .formulario {
+        margin: 10px;
+        /* Margen externo */
+        display: flex;
+        /* Flexbox para el formulario */
+        flex-direction: column;
+        /* Inputs uno debajo del otro */
+    }
+
+    .m-bottom {
+        margin-bottom: 10px;
+        /* Margen inferior para separar inputs */
+    }
+</style>
+
+<body>
+
+    <div class="contenedor">
+
+        <h1>Vista de Formulario</h1>
+
+        <!-- Bloque para mostrar mensajes (errores o éxito) si existen -->
+        {% if infosms %}
+        <div style="
+                background: #ffe6e6;
+                border-left: 5px solid #ff4d4d;
+                padding: 12px 18px;
+                margin-bottom: 20px;
+                border-radius: 5px;
+                font-family: Arial, sans-serif;
+            ">
+            <p style="
+                    color: #b30000;
+                    font-weight: bold;
+                    margin: 0;
+                    font-size: 15px;
+                ">
+                {{ infosms }} <!-- Mensaje 1 -->
+                <br>
+                <br>
+                {{ infosms2 }} <!-- Mensaje 2 -->
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Formulario que envía datos por POST -->
+        <form class="formulario" method="post">
+            {% csrf_token %}
+
+            <!-- Errores generales (no de campo) -->
+            {% if form.non_field_errors %}
+                <div style="background: #ffe6e6; color: #b30000; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <label for="{{ form.username.id_for_label }}">Nombre de usuario:</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div style="color: red; font-size: 0.9em;">{{ form.username.errors }}</div>
+            {% endif %}
+
+            <label for="{{ form.password1.id_for_label }}" style="margin-top: 10px;">Contraseña:</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <div style="color: red; font-size: 0.9em;">{{ form.password1.errors }}</div>
+            {% endif %}
+
+            <label for="{{ form.password2.id_for_label }}" style="margin-top: 10px;">Confirmar contraseña:</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <div style="color: red; font-size: 0.9em;">{{ form.password2.errors }}</div>
+            {% endif %}
+
+            <label for="{{ form.imagen_url.id_for_label }}" style="margin-top: 10px;">URL de Avatar (Opcional):</label>
+            {{ form.imagen_url }}
+            {% if form.imagen_url.errors %}
+                <div style="color: red; font-size: 0.9em;">{{ form.imagen_url.errors }}</div>
+            {% endif %}
+
+            <button type="submit" style="margin-top: 20px;">Registrarse</button>
+        </form>
+
+    </div>
+
+</body>
+
+</html>

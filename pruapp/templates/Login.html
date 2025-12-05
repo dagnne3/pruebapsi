@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Prueba2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #999;
+        }
+
+        .errorlist {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+
+        .errorlist li {
+            background-color: #fee;
+            color: #c33;
+            padding: 10px 12px;
+            border-radius: 4px;
+            border-left: 4px solid #c33;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .non-field-errors {
+            margin-bottom: 20px;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .login-footer p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .login-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .login-footer a:hover {
+            color: #764ba2;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px 15px;
+            border-radius: 4px;
+            border-left: 4px solid #28a745;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 30px 20px;
+            }
+
+            .login-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>🔐 Login</h1>
+                <p>Accede a tu cuenta</p>
+            </div>
+
+            <!-- Bloque para mostrar mensajes enviados desde la vista (ej. registro exitoso) -->
+            {% if messages %}
+            {% for message in messages %}
+            <div class="success-message">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+
+            <!-- Formulario de login que envía a la URL llamada 'login' -->
+            <form method="POST" action="{% url 'login' %}" novalidate>
+                {% csrf_token %} <!-- Token de seguridad -->
+
+                <!-- Errores generales que no pertenecen a un campo específico (ej. usuario no encontrado) -->
+                {% if form.non_field_errors %}
+                <div class="non-field-errors">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Campo de nombre de usuario -->
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}">Nombre de usuario</label>
+                    {{ form.username }}
+                    <!-- Mostrar errores del campo username -->
+                    {% if form.username.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.username.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <!-- Campo de contraseña -->
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}">Contraseña</label>
+                    {{ form.password }}
+                    <!-- Mostrar errores del campo password -->
+                    {% if form.password.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.password.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <!-- Botón de envío -->
+                <button type="submit" class="btn-login">Iniciar sesión</button>
+            </form>
+
+            <!-- Pie del formulario con enlace al registro -->
+            <div class="login-footer">
+                <p>¿No tienes cuenta? <a href="{% url 'formulario' %}">Regístrate aquí</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
