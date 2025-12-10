@@ -14,15 +14,20 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- Seguridad y depuración ---
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dummy-key-for-dev')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = [os.getenv('WEBSITE_HOSTNAME')] if os.getenv('WEBSITE_HOSTNAME') else []
-if not ALLOWED_HOSTS:
-     ALLOWED_HOSTS = ['*']
+# Azure: Usar variable de entorno
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-# Si usas un dominio en producción, mantenlo en .env como DOMINIO
-# Si usas un dominio en producción, mantenlo en .env como DOMINIO
-CSRF_TRUSTED_ORIGINS = ['https://' + os.getenv('WEBSITE_HOSTNAME')] if os.getenv('WEBSITE_HOSTNAME') else []
+# Azure: True para ver errores en desarrollo/pruebas. False en producción real.
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
+# Azure: Permitir todos los hosts
+ALLOWED_HOSTS = ['*']
+
+# --- Apps ---
+# Azure: Dominio confiable para HTTPS
+CSRF_TRUSTED_ORIGINS = [os.getenv("DOMINIO")]
+
+
 
 # --- Apps ---
 INSTALLED_APPS = [
@@ -93,8 +98,8 @@ USE_TZ = True
 # --- Static ---
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-if not DEBUG:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Azure: Almacenamiento comprimido de estáticos
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # --- Media ---
 MEDIA_URL = 'media/'
